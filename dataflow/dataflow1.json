@@ -9,14 +9,14 @@
 						"referenceName": "Slalom Azure Snowflake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "source1"
+					"name": "FactInternetSales"
 				},
 				{
 					"linkedService": {
 						"referenceName": "Slalom Azure Snowflake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "source2"
+					"name": "DimProduct"
 				}
 			],
 			"sinks": [],
@@ -25,7 +25,7 @@
 					"name": "Join1"
 				}
 			],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: '',\n\tschemaName: '',\n\tstore: 'snowflake') ~> source1\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: '',\n\tschemaName: '',\n\tstore: 'snowflake') ~> source2\nsource1 join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'FactInternetSales',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> FactInternetSales\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'DimProduct',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> DimProduct\nFactInternetSales, DimProduct join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1"
 		}
 	}
 }
