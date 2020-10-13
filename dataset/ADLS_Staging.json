@@ -1,0 +1,33 @@
+{
+	"name": "ADLS_Staging",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDL_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TableName": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "ADLS Gen1"
+		},
+		"annotations": [],
+		"type": "AzureDataLakeStoreFile",
+		"typeProperties": {
+			"format": {
+				"type": "ParquetFormat"
+			},
+			"fileName": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@concat('Dev/Data/AdventureWorks/staging/',dataset().TableName)",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

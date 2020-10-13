@@ -1,0 +1,40 @@
+{
+	"name": "Local_DB_Table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Local_AdventureWorksDW",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "On-Prem"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "DepartmentID",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GroupName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ModifiedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dummy",
+			"table": "dummy"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

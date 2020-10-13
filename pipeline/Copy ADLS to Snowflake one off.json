@@ -1,0 +1,71 @@
+{
+	"name": "Copy ADLS to Snowflake one off",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Person to Snowflake",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "SnowflakeSink",
+						"preCopyScript": "TRUNCATE TABLE \"HumanResources\".\"EmployeeDepartmentHistory\"",
+						"importSettings": {
+							"type": "SnowflakeImportCopyCommand",
+							"additionalCopyOptions": {
+								"ON_ERROR": "CONTINUE"
+							}
+						}
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "AzureBlobStorage1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "snowflake-stage"
+					},
+					"parallelCopies": 1
+				},
+				"inputs": [
+					{
+						"referenceName": "philly_adls_g2_staging_parquet",
+						"type": "DatasetReference",
+						"parameters": {
+							"sourceName": "AdventureWorks_Local",
+							"schemaName": "HumanResources",
+							"tableName": "EmployeeDepartmentHistory"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Snowflake_Lafferty_Table_Person",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Old Pipelines"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-10-13T16:19:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

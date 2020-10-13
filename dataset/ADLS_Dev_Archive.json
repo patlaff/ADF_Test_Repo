@@ -1,0 +1,40 @@
+{
+	"name": "ADLS_Dev_Archive",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDL_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sourceName": {
+				"type": "String"
+			},
+			"schemaName": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"tableName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ADLS Gen1"
+		},
+		"annotations": [],
+		"type": "AzureDataLakeStoreFile",
+		"typeProperties": {
+			"format": {
+				"type": "ParquetFormat"
+			},
+			"fileName": {
+				"value": "@concat(dataset().tableName,'_',formatDateTime(trigger().startTime, 'yyyy-MM-dd'))",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@concat('Dev/Data/archive/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName,'/',formatDateTime(trigger().startTime, 'yyyy'),'/',formatDateTime(trigger().startTime, 'MM'),'/',formatDateTime(trigger().startTime, 'dd'))",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

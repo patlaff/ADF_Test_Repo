@@ -1,0 +1,43 @@
+{
+	"name": "philly_adls_g2_staging_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "phillyadlsg2",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sourceName": {
+				"type": "string"
+			},
+			"schemaName": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"tableName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ADLS Gen2"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().tableName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat('Data/staging/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName)",
+					"type": "Expression"
+				},
+				"fileSystem": "dev"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

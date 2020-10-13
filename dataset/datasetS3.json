@@ -1,0 +1,28 @@
+{
+	"name": "datasetS3",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AmazonS3_Source",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Miscellaneous"
+		},
+		"annotations": [],
+		"type": "AmazonS3Object",
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": ",",
+				"rowDelimiter": "",
+				"nullValue": "\\N",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": false
+			},
+			"key": "adf-lab/Numbers.txt",
+			"bucketName": "sumit-sample"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

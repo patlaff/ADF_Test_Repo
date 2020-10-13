@@ -1,0 +1,12 @@
+{
+	"name": "Lafferty-SelfHostedIR",
+	"properties": {
+		"type": "SelfHosted",
+		"typeProperties": {
+			"linkedInfo": {
+				"resourceId": "/subscriptions/23e24950-8a7c-4cbd-a9a9-1edcf2029ff0/resourcegroups/innovationlab/providers/Microsoft.DataFactory/factories/PHL-InnovationLab-Factory/integrationruntimes/Lafferty-SelfHostedIR",
+				"authorizationType": "Rbac"
+			}
+		}
+	}
+}

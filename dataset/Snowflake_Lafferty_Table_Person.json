@@ -1,0 +1,99 @@
+{
+	"name": "Snowflake_Lafferty_Table_Person",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Snowflake_Lafferty_trial",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Snowflake"
+		},
+		"annotations": [],
+		"type": "SnowflakeTable",
+		"schema": [
+			{
+				"name": "BusinessEntityID",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "PersonType",
+				"type": "VARCHAR",
+				"precision": 2,
+				"scale": 0
+			},
+			{
+				"name": "NameStyle",
+				"type": "VARCHAR",
+				"precision": 100,
+				"scale": 0
+			},
+			{
+				"name": "Title",
+				"type": "VARCHAR",
+				"precision": 8,
+				"scale": 0
+			},
+			{
+				"name": "FirstName",
+				"type": "VARCHAR",
+				"precision": 100,
+				"scale": 0
+			},
+			{
+				"name": "MiddleName",
+				"type": "VARCHAR",
+				"precision": 100,
+				"scale": 0
+			},
+			{
+				"name": "LastName",
+				"type": "VARCHAR",
+				"precision": 100,
+				"scale": 0
+			},
+			{
+				"name": "Suffix",
+				"type": "VARCHAR",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "EmailPromotion",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "AdditionalContactInfo",
+				"type": "VARCHAR",
+				"precision": 160,
+				"scale": 0
+			},
+			{
+				"name": "Demographics",
+				"type": "VARCHAR",
+				"precision": 160,
+				"scale": 0
+			},
+			{
+				"name": "rowguid",
+				"type": "VARCHAR",
+				"precision": 100,
+				"scale": 0
+			},
+			{
+				"name": "ModifiedDate",
+				"type": "TIMESTAMP_NTZ",
+				"precision": 29,
+				"scale": 9
+			}
+		],
+		"typeProperties": {
+			"schema": "HumanResources",
+			"table": "EmployeeDepartmentHistory"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

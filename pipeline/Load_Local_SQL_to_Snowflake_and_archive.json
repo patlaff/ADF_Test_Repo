@@ -1,0 +1,314 @@
+{
+	"name": "Load_Local_SQL_to_Snowflake_and_archive",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup_Tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES\nWHERE TABLE_TYPE = 'BASE TABLE'\nAND TABLE_NAME NOT IN ('AdventureWorksDWBuildVersion', 'DatabaseLog', 'sysdiagrams')",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Local_DB_Table",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEachTable",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup_Tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy Data to ADLS_staging",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@item().TABLE_NAME"
+								},
+								{
+									"name": "Destination",
+									"value": "@{concat('Data/AdventureWorks/',item().TABLE_NAME)}/@{item().TABLE_NAME}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": {
+										"value": "SELECT * FROM @{item().TABLE_SCHEMA}.@{item().TABLE_NAME}",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"dataIntegrationUnits": 0
+							},
+							"inputs": [
+								{
+									"referenceName": "Local_DB_Table",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "philly_adls_g2_staging_parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"sourceName": {
+											"value": "@variables('SOURCE')",
+											"type": "Expression"
+										},
+										"schemaName": {
+											"value": "@item().TABLE_SCHEMA",
+											"type": "Expression"
+										},
+										"tableName": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Copy Data from Staging to Snowflake",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Copy Data to ADLS_staging",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true
+									}
+								},
+								"sink": {
+									"type": "SnowflakeSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE \"@{toUpper(item().TABLE_SCHEMA)}\".\"@{item().TABLE_NAME}\"",
+										"type": "Expression"
+									},
+									"importSettings": {
+										"type": "SnowflakeImportCopyCommand",
+										"additionalCopyOptions": {
+											"ON_ERROR": "CONTINUE"
+										}
+									}
+								},
+								"enableStaging": true,
+								"stagingSettings": {
+									"linkedServiceName": {
+										"referenceName": "AzureBlobStorage1",
+										"type": "LinkedServiceReference"
+									},
+									"path": "snowflake-stage"
+								},
+								"enableSkipIncompatibleRow": true,
+								"logStorageSettings": {
+									"linkedServiceName": {
+										"referenceName": "phillyadlsg2",
+										"type": "LinkedServiceReference"
+									},
+									"path": "dev/Logs"
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "philly_adls_g2_staging_parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"sourceName": {
+											"value": "@variables('SOURCE')",
+											"type": "Expression"
+										},
+										"schemaName": {
+											"value": "@item().TABLE_SCHEMA",
+											"type": "Expression"
+										},
+										"tableName": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Slalom_Snowflake_Azure_Lafferty_Test_Table",
+									"type": "DatasetReference",
+									"parameters": {
+										"SchemaName": {
+											"value": "@toUpper(item().TABLE_SCHEMA)",
+											"type": "Expression"
+										},
+										"TableName": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Archive Data from ADLS_Staging to ADLS_Archive",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Copy Data from Staging to Snowflake",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "philly_adls_g2_staging_parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"sourceName": {
+											"value": "@variables('SOURCE')",
+											"type": "Expression"
+										},
+										"schemaName": {
+											"value": "@item().TABLE_SCHEMA",
+											"type": "Expression"
+										},
+										"tableName": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "philly_adls_g2_archive_parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"sourceName": {
+											"value": "@variables('SOURCE')",
+											"type": "Expression"
+										},
+										"schemaName": {
+											"value": "@item().TABLE_SCHEMA",
+											"type": "Expression"
+										},
+										"tableName": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"SOURCE": {
+				"type": "String",
+				"defaultValue": "AdventureWorksDW_Local"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-10-13T16:19:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,120 @@
+{
+	"name": "Load_Azure_SQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup_Tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES\nWHERE TABLE_TYPE = 'BASE TABLE'\nAND TABLE_NAME NOT IN ('AdventureWorksDWBuildVersion', 'sysdiagrams')",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureDL_SourceDB_Table",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEachTable",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup_Tables').output.value.ChildItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy Data to ADLS_staging",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@item().TABLE_NAME"
+								},
+								{
+									"name": "Destination",
+									"value": "@{concat('Data/AdventureWorks/',item().TABLE_NAME)}/@{item().TABLE_NAME}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "SqlSource",
+									"sqlReaderQuery": {
+										"value": "SELECT * FROM @{item().TABLE_SCHEMA}.@{item().TABLE_NAME}",
+										"type": "Expression"
+									},
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureDataLakeStoreSink"
+								},
+								"enableStaging": false,
+								"dataIntegrationUnits": 0
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureDL_SourceDB_Table",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ADLS_Dev_Staging",
+									"type": "DatasetReference",
+									"parameters": {
+										"sourceName": "AdventureWorks_Azure",
+										"schemaName": {
+											"value": "@item().TABLE_SCHEMA",
+											"type": "Expression"
+										},
+										"tableName": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "Old Pipelines"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-10-13T16:19:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

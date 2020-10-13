@@ -1,0 +1,18 @@
+{
+	"name": "AzureDL_SourceDB_Table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDL_SourceDB",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "On-Prem"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": "dummy"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

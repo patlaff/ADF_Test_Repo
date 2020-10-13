@@ -1,0 +1,117 @@
+{
+	"name": "untilDatesMatch",
+	"properties": {
+		"activities": [
+			{
+				"name": "Until1",
+				"type": "Until",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(formatDateTime(activity('Lookup1').output.firstrow.date1, 'yyyyMMdd'), formatDateTime(utcnow(), 'yyyyMMdd'))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Lookup1",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlSource",
+									"sqlReaderQuery": "SELECT cast(getdate() as date) as date1",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "AzureDL_SourceDB_Table",
+									"type": "DatasetReference"
+								}
+							}
+						}
+					],
+					"timeout": "7.00:00:00"
+				}
+			},
+			{
+				"name": "Lookup2",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource",
+						"sqlReaderQuery": "SELECT cast(getdate() as date) as date2",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureDL_SourceDB_Table",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Set Variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "utcnow_date",
+					"value": {
+						"value": "@formatDateTime(utcnow(), 'yyyyMMdd')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "lookup_date",
+					"value": {
+						"value": "@formatDateTime(activity('Lookup2').output.firstrow.date2, 'yyyyMMdd')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"utcnow_date": {
+				"type": "String"
+			},
+			"lookup_date": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Miscellaneous"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-10-13T16:19:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
