@@ -146,7 +146,7 @@
 								"sink": {
 									"type": "SnowflakeSink",
 									"preCopyScript": {
-										"value": "TRUNCATE TABLE \"@{toUpper(item().TABLE_SCHEMA)}\".\"@{item().TABLE_NAME}\"",
+										"value": "ALTER SESSION SET BINARY_AS_TEXT = FALSE;\nTRUNCATE TABLE \"@{toUpper(item().TABLE_SCHEMA)}\".\"@{item().TABLE_NAME}\";",
 										"type": "Expression"
 									},
 									"importSettings": {
