@@ -150,10 +150,7 @@
 										"type": "Expression"
 									},
 									"importSettings": {
-										"type": "SnowflakeImportCopyCommand",
-										"additionalCopyOptions": {
-											"ON_ERROR": "CONTINUE"
-										}
+										"type": "SnowflakeImportCopyCommand"
 									}
 								},
 								"enableStaging": true,
