@@ -164,14 +164,7 @@
 									},
 									"path": "snowflake-stage"
 								},
-								"enableSkipIncompatibleRow": true,
-								"logStorageSettings": {
-									"linkedServiceName": {
-										"referenceName": "phillyadlsg2",
-										"type": "LinkedServiceReference"
-									},
-									"path": "dev/Logs"
-								}
+								"enableSkipIncompatibleRow": false
 							},
 							"inputs": [
 								{
