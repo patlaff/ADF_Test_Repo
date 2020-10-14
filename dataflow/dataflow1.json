@@ -17,15 +17,36 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "DimProduct"
+				},
+				{
+					"linkedService": {
+						"referenceName": "Slalom Azure Snowflake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "DimCurrency"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "Slalom Azure Snowflake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SnowflakeRefined"
+				}
+			],
 			"transformations": [
 				{
 					"name": "Join1"
+				},
+				{
+					"name": "Join2"
+				},
+				{
+					"name": "Aggregate1"
 				}
 			],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'FactInternetSales',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> FactInternetSales\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'DimProduct',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> DimProduct\nFactInternetSales, DimProduct join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1"
+			"script": "source(output(\n\t\tProductKey as decimal(38,0),\n\t\tOrderDateKey as decimal(38,0),\n\t\tDueDateKey as decimal(38,0),\n\t\tShipDateKey as decimal(38,0),\n\t\tCustomerKey as decimal(38,0),\n\t\tPromotionKey as decimal(38,0),\n\t\tCurrencyKey as decimal(38,0),\n\t\tSalesTerritoryKey as decimal(38,0),\n\t\tSalesOrderNumber as string,\n\t\tSalesOrderLineNumber as decimal(38,0),\n\t\tRevisionNumber as decimal(38,0),\n\t\tOrderQuantity as decimal(38,0),\n\t\tUnitPrice as double,\n\t\tExtendedAmount as double,\n\t\tUnitPriceDiscountPct as double,\n\t\tDiscountAmount as double,\n\t\tProductStandardCost as double,\n\t\tTotalProductCost as double,\n\t\tSalesAmount as double,\n\t\tTaxAmt as double,\n\t\tFreight as double,\n\t\tCarrierTrackingNumber as string,\n\t\tCustomerPONumber as string,\n\t\tOrderDate as timestamp,\n\t\tDueDate as timestamp,\n\t\tShipDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'FactInternetSales',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> FactInternetSales\nsource(output(\n\t\tProductKey as decimal(38,0),\n\t\tProductAlternateKey as string,\n\t\tProductSubcategoryKey as decimal(38,0),\n\t\tWeightUnitMeasureCode as string,\n\t\tSizeUnitMeasureCode as string,\n\t\tEnglishProductName as string,\n\t\tSpanishProductName as string,\n\t\tFrenchProductName as string,\n\t\tStandardCost as double,\n\t\tFinishedGoodsFlag as decimal(38,0),\n\t\tColor as string,\n\t\tSafetyStockLevel as decimal(38,0),\n\t\tReorderPoint as decimal(38,0),\n\t\tListPrice as double,\n\t\tSize as string,\n\t\tSizeRange as string,\n\t\tWeight as double,\n\t\tDaysToManufacture as decimal(38,0),\n\t\tProductLine as string,\n\t\tDealerPrice as double,\n\t\tClass as string,\n\t\tStyle as string,\n\t\tModelName as string,\n\t\tEnglishDescription as string,\n\t\tFrenchDescription as string,\n\t\tChineseDescription as string,\n\t\tArabicDescription as string,\n\t\tHebrewDescription as string,\n\t\tThaiDescription as string,\n\t\tGermanDescription as string,\n\t\tJapaneseDescription as string,\n\t\tTurkishDescription as string,\n\t\tStartDate as timestamp,\n\t\tEndDate as timestamp,\n\t\tStatus as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'DimProduct',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> DimProduct\nsource(output(\n\t\tCurrencyKey as decimal(38,0),\n\t\tCurrencyAlternateKey as string,\n\t\tCurrencyName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'DimCurrency',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> DimCurrency\nFactInternetSales, DimProduct join(FactInternetSales@ProductKey == DimProduct@ProductKey,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nJoin1, DimCurrency join(FactInternetSales@CurrencyKey == DimCurrency@CurrencyKey,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join2\nJoin2 aggregate(groupBy(ProductAlternateKey,\n\t\tEnglishProductName,\n\t\tCurrencyAlternateKey),\n\tUnitPrice = sum(UnitPrice)) ~> Aggregate1\nAggregate1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\ttableName: 'pricesByProduct_dataflow',\n\tschemaName: 'REFINED',\n\tdeletable: false,\n\tinsertable: true,\n\tupdateable: false,\n\tupsertable: true,\n\tkeys: ['ProductAlternateKey'],\n\tstore: 'snowflake',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SnowflakeRefined"
 		}
 	}
 }
