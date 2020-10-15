@@ -19,9 +19,9 @@
 						"referenceName": "create_refined_pricesByProduct_dataflow",
 						"type": "DataFlowReference"
 					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
+					"integrationRuntime": {
+						"referenceName": "integrationRuntime1",
+						"type": "IntegrationRuntimeReference"
 					}
 				}
 			}
