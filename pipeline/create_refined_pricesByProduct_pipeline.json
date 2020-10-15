@@ -1,34 +1,28 @@
 {
-	"name": "pipeline1",
+	"name": "create_refined_pricesByProduct_pipeline",
 	"properties": {
 		"activities": [
 			{
-				"name": "Execute Pipeline1",
-				"type": "ExecutePipeline",
+				"name": "create_refined_pricesByProduct_dataflow",
+				"type": "ExecuteDataFlow",
 				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"pipeline": {
-						"referenceName": "Load_Local_SQL_to_Snowflake_and_archive",
-						"type": "PipelineReference"
+					"dataflow": {
+						"referenceName": "create_refined_pricesByProduct_dataflow",
+						"type": "DataFlowReference"
 					},
-					"waitOnCompletion": true
-				}
-			},
-			{
-				"name": "Execute Pipeline2",
-				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "Execute Pipeline1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
 					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"waitOnCompletion": true
 				}
 			}
 		],

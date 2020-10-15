@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "create_refined_pricesByProduct_dataflow",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
