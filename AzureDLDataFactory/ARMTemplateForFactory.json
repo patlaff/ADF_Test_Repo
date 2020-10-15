@@ -1,0 +1,2114 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "AzureDLDataFactory"
+		},
+		"AmazonS3_Source_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS3_Source'"
+		},
+		"AzureDL_DataLake_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'AzureDL_DataLake'"
+		},
+		"AzureDL_DataWarehouse_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureDL_DataWarehouse'"
+		},
+		"AzureDL_SourceDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureDL_SourceDB'"
+		},
+		"AzureDL_SourceDB_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'AzureDL_SourceDB'"
+		},
+		"AzureFileStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureFileStorage1'"
+		},
+		"Gen2_Staging_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'Gen2_Staging'"
+		},
+		"GitHub1_credential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'credential' of 'GitHub1'"
+		},
+		"Local_AdventureWorksDW_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Local_AdventureWorksDW'"
+		},
+		"PowerBIDataset_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'PowerBIDataset'"
+		},
+		"phillyadlsg2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'phillyadlsg2'"
+		},
+		"test_SQLServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'test_SQLServer'"
+		},
+		"ADLS_Archive_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@concat(dataset().TableName,'_',formatDateTime(trigger().startTime, 'yyyy-MM-dd'))"
+		},
+		"ADLS_Archive_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat('Dev/Data/AdventureWorks/archive/',dataset().TableName,'/',formatDateTime(trigger().startTime, 'yyyy'),'/',formatDateTime(trigger().startTime, 'MM'),'/',formatDateTime(trigger().startTime, 'dd'))"
+		},
+		"ADLS_Dev_Archive_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@concat(dataset().tableName,'_',formatDateTime(trigger().startTime, 'yyyy-MM-dd'))"
+		},
+		"ADLS_Dev_Archive_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat('Dev/Data/archive/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName,'/',formatDateTime(trigger().startTime, 'yyyy'),'/',formatDateTime(trigger().startTime, 'MM'),'/',formatDateTime(trigger().startTime, 'dd'))"
+		},
+		"ADLS_Dev_Staging_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().tableName"
+		},
+		"ADLS_Dev_Staging_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat('Dev/Data/staging/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName)"
+		},
+		"ADLS_Staging_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().TableName"
+		},
+		"ADLS_Staging_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat('Dev/Data/AdventureWorks/staging/',dataset().TableName)"
+		},
+		"AmazonS3_Source_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAIQ4OP52NL7BUMPBQ "
+		},
+		"AzureBlobStorage1_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage1'"
+		},
+		"AzureDL_DataLake_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://azuredldatalake.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDL_DataLake_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "94918a77-5cb8-410d-8e21-2ea4d88c8e82"
+		},
+		"AzureDL_DataLake_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"AzureDL_DataLake_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "23e24950-8a7c-4cbd-a9a9-1edcf2029ff0"
+		},
+		"AzureDL_DataLake_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "Azure_DataLake_Presentation"
+		},
+		"AzureDL_SourceDB_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "f9378d8f-a20d-422f-b14f-a6f7958b77d6"
+		},
+		"AzureDL_SourceDB_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"Gen2_Staging_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://laffertymalverndlg2.dfs.core.windows.net"
+		},
+		"GitHub1_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "patlaff"
+		},
+		"PowerBIDataset_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.powerbi.com/v1.0/myorg/groups/674a0659-322c-460d-853a-5c8c9259e6c1/datasets/62d62abf-5f01-4b10-88db-ca2f5dc00805/refreshes"
+		},
+		"PowerBIDataset_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "57f261b5-e3ec-4ad5-97aa-9fbb5dd5517b"
+		},
+		"PowerBIDataset_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"PowerBIDataset_properties_typeProperties_aadResourceId": {
+			"type": "string",
+			"defaultValue": "https://analysis.windows.net/powerbi/api"
+		},
+		"Slalom Azure Snowflake_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Slalom Azure Snowflake'"
+		},
+		"Slalom_Snowflake_AWS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Slalom_Snowflake_AWS'"
+		},
+		"Snowflake_Lafferty_trial_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Snowflake_Lafferty_trial'"
+		},
+		"phillyadlsg2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://phillyadlsg2.dfs.core.windows.net"
+		},
+		"Lafferty-SelfHostedIR_properties_typeProperties_linkedInfo_resourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/23e24950-8a7c-4cbd-a9a9-1edcf2029ff0/resourcegroups/innovationlab/providers/Microsoft.DataFactory/factories/PHL-InnovationLab-Factory/integrationruntimes/Lafferty-SelfHostedIR"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy ADLS to Snowflake one off')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Person to Snowflake",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "SnowflakeSink",
+								"preCopyScript": "TRUNCATE TABLE \"HumanResources\".\"EmployeeDepartmentHistory\"",
+								"importSettings": {
+									"type": "SnowflakeImportCopyCommand",
+									"additionalCopyOptions": {
+										"ON_ERROR": "CONTINUE"
+									}
+								}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "AzureBlobStorage1",
+									"type": "LinkedServiceReference"
+								},
+								"path": "snowflake-stage"
+							},
+							"parallelCopies": 1
+						},
+						"inputs": [
+							{
+								"referenceName": "philly_adls_g2_staging_parquet",
+								"type": "DatasetReference",
+								"parameters": {
+									"sourceName": "AdventureWorks_Local",
+									"schemaName": "HumanResources",
+									"tableName": "EmployeeDepartmentHistory"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Snowflake_Lafferty_Table_Person",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Old Pipelines"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-13T16:19:57Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/philly_adls_g2_staging_parquet')]",
+				"[concat(variables('factoryId'), '/datasets/Snowflake_Lafferty_Table_Person')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_Azure_SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup_Tables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES\nWHERE TABLE_TYPE = 'BASE TABLE'\nAND TABLE_NAME NOT IN ('AdventureWorksDWBuildVersion', 'sysdiagrams')",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureDL_SourceDB_Table",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEachTable",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup_Tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup_Tables').output.value.ChildItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy Data to ADLS_staging",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@item().TABLE_NAME"
+										},
+										{
+											"name": "Destination",
+											"value": "@{concat('Data/AdventureWorks/',item().TABLE_NAME)}/@{item().TABLE_NAME}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "SqlSource",
+											"sqlReaderQuery": {
+												"value": "SELECT * FROM @{item().TABLE_SCHEMA}.@{item().TABLE_NAME}",
+												"type": "Expression"
+											},
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureDataLakeStoreSink"
+										},
+										"enableStaging": false,
+										"dataIntegrationUnits": 0
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureDL_SourceDB_Table",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ADLS_Dev_Staging",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": "AdventureWorks_Azure",
+												"schemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												},
+												"tableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "Old Pipelines"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-13T16:19:57Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureDL_SourceDB_Table')]",
+				"[concat(variables('factoryId'), '/datasets/ADLS_Dev_Staging')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_Local_SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup_Tables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES\nWHERE TABLE_TYPE = 'BASE TABLE'\nAND TABLE_NAME NOT IN ('AdventureWorksDWBuildVersion', 'sysdiagrams')",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "Local_DB_Table",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEachTable",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup_Tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup_Tables').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy Data to ADLS_staging",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@item().TABLE_NAME"
+										},
+										{
+											"name": "Destination",
+											"value": "@{concat('Data/AdventureWorks/',item().TABLE_NAME)}/@{item().TABLE_NAME}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "SqlServerSource",
+											"sqlReaderQuery": {
+												"value": "SELECT * FROM @{item().TABLE_SCHEMA}.@{item().TABLE_NAME}",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"dataIntegrationUnits": 0
+									},
+									"inputs": [
+										{
+											"referenceName": "Local_DB_Table",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "philly_adls_g2_staging_parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": "AdventureWorks_Local",
+												"schemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												},
+												"tableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "Old Pipelines"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-13T16:19:57Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Local_DB_Table')]",
+				"[concat(variables('factoryId'), '/datasets/philly_adls_g2_staging_parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_Local_SQL_to_Snowflake_and_archive')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup_Tables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES\nWHERE TABLE_TYPE = 'BASE TABLE'\nAND TABLE_NAME NOT IN ('AdventureWorksDWBuildVersion', 'DatabaseLog', 'sysdiagrams')",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "Local_DB_Table",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEachTable",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup_Tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup_Tables').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy Data to ADLS_staging",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@item().TABLE_NAME"
+										},
+										{
+											"name": "Destination",
+											"value": "@{concat('Data/AdventureWorks/',item().TABLE_NAME)}/@{item().TABLE_NAME}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "SqlServerSource",
+											"sqlReaderQuery": {
+												"value": "SELECT * FROM @{item().TABLE_SCHEMA}.@{item().TABLE_NAME}",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"dataIntegrationUnits": 0
+									},
+									"inputs": [
+										{
+											"referenceName": "Local_DB_Table",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "philly_adls_g2_staging_parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": {
+													"value": "@variables('SOURCE')",
+													"type": "Expression"
+												},
+												"schemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												},
+												"tableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Copy Data from Staging to Snowflake",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Copy Data to ADLS_staging",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ParquetSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true
+											}
+										},
+										"sink": {
+											"type": "SnowflakeSink",
+											"preCopyScript": {
+												"value": "TRUNCATE TABLE \"@{toUpper(item().TABLE_SCHEMA)}\".\"@{item().TABLE_NAME}\";",
+												"type": "Expression"
+											},
+											"importSettings": {
+												"type": "SnowflakeImportCopyCommand"
+											}
+										},
+										"enableStaging": true,
+										"stagingSettings": {
+											"linkedServiceName": {
+												"referenceName": "AzureBlobStorage1",
+												"type": "LinkedServiceReference"
+											},
+											"path": "snowflake-stage"
+										},
+										"enableSkipIncompatibleRow": false
+									},
+									"inputs": [
+										{
+											"referenceName": "philly_adls_g2_staging_parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": {
+													"value": "@variables('SOURCE')",
+													"type": "Expression"
+												},
+												"schemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												},
+												"tableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Slalom_Snowflake_Azure_Lafferty_Test_Table",
+											"type": "DatasetReference",
+											"parameters": {
+												"SchemaName": {
+													"value": "@toUpper(item().TABLE_SCHEMA)",
+													"type": "Expression"
+												},
+												"TableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Archive Data from ADLS_Staging to ADLS_Archive",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Copy Data from Staging to Snowflake",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ParquetSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "philly_adls_g2_staging_parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": {
+													"value": "@variables('SOURCE')",
+													"type": "Expression"
+												},
+												"schemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												},
+												"tableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "philly_adls_g2_archive_parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": {
+													"value": "@variables('SOURCE')",
+													"type": "Expression"
+												},
+												"schemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												},
+												"tableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"variables": {
+					"SOURCE": {
+						"type": "String",
+						"defaultValue": "AdventureWorksDW_Local"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-13T16:19:57Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Local_DB_Table')]",
+				"[concat(variables('factoryId'), '/datasets/philly_adls_g2_staging_parquet')]",
+				"[concat(variables('factoryId'), '/datasets/Slalom_Snowflake_Azure_Lafferty_Test_Table')]",
+				"[concat(variables('factoryId'), '/datasets/philly_adls_g2_archive_parquet')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_and_Archive_reference')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup_Tables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES\nWHERE TABLE_TYPE = 'BASE TABLE'\nAND TABLE_NAME NOT IN ('AdventureWorksDWBuildVersion', 'sysdiagrams')",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureDL_SourceDB_Table",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEachTable",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup_Tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup_Tables').output.value.ChildItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy Data to ADLS_staging",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@item().TABLE_NAME"
+										},
+										{
+											"name": "Destination",
+											"value": "@{concat('Data/AdventureWorks/',item().TABLE_NAME)}/@{item().TABLE_NAME}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "SqlSource",
+											"sqlReaderQuery": {
+												"value": "SELECT * FROM @{item().TABLE_SCHEMA}.@{item().TABLE_NAME}",
+												"type": "Expression"
+											},
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureDataLakeStoreSink"
+										},
+										"enableStaging": false,
+										"dataIntegrationUnits": 0
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureDL_SourceDB_Table",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ADLS_Dev_Staging",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": "AdventureWorks_Azure",
+												"schemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												},
+												"tableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Copy Data to Archive",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Load Staging to Tables",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureDataLakeStoreSource",
+											"recursive": true
+										},
+										"sink": {
+											"type": "AzureDataLakeStoreSink"
+										},
+										"enableStaging": false,
+										"dataIntegrationUnits": 0
+									},
+									"inputs": [
+										{
+											"referenceName": "ADLS_Dev_Staging",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": "AdventureWorks",
+												"schemaName": "dbo",
+												"tableName": "@item().TABLE_NAME"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ADLS_Dev_Archive",
+											"type": "DatasetReference",
+											"parameters": {
+												"sourceName": "AdventureWorks",
+												"schemaName": "dbo",
+												"tableName": "@item().TABLE_NAME"
+											}
+										}
+									]
+								},
+								{
+									"name": "Load Staging Tables",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Copy Data to ADLS_staging",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[LoadStagingTables]",
+										"storedProcedureParameters": {
+											"tableName": {
+												"value": {
+													"value": "dbo.@{item().TABLE_NAME}",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureDL_DataWarehouse",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Load Staging to Tables",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Load Staging Tables",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[DropLoadProdTables]",
+										"storedProcedureParameters": {
+											"tableName": {
+												"value": {
+													"value": "dbo.@{item().TABLE_NAME}",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureDL_DataWarehouse",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "Old Pipelines"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-13T16:19:57Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureDL_SourceDB_Table')]",
+				"[concat(variables('factoryId'), '/datasets/ADLS_Dev_Staging')]",
+				"[concat(variables('factoryId'), '/datasets/ADLS_Dev_Archive')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataWarehouse')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/create_refined_pricesByProduct_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "create_refined_pricesByProduct_dataflow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "create_refined_pricesByProduct_dataflow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"FactInternetSales": {},
+									"DimProduct": {},
+									"DimCurrency": {},
+									"SnowflakeRefined": {}
+								}
+							},
+							"staging": {},
+							"integrationRuntime": {
+								"referenceName": "integrationRuntime1",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/create_refined_pricesByProduct_dataflow')]",
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntime1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/untilDatesMatch')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Until1",
+						"type": "Until",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(formatDateTime(activity('Lookup1').output.firstrow.date1, 'yyyyMMdd'), formatDateTime(utcnow(), 'yyyyMMdd'))",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Lookup1",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlSource",
+											"sqlReaderQuery": "SELECT cast(getdate() as date) as date1",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "AzureDL_SourceDB_Table",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								}
+							],
+							"timeout": "7.00:00:00"
+						}
+					},
+					{
+						"name": "Lookup2",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": "SELECT cast(getdate() as date) as date2",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureDL_SourceDB_Table",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Set Variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "utcnow_date",
+							"value": {
+								"value": "@formatDateTime(utcnow(), 'yyyyMMdd')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set Variable2",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Lookup2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "lookup_date",
+							"value": {
+								"value": "@formatDateTime(activity('Lookup2').output.firstrow.date2, 'yyyyMMdd')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"variables": {
+					"utcnow_date": {
+						"type": "String"
+					},
+					"lookup_date": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Miscellaneous"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-13T16:19:57Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureDL_SourceDB_Table')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Archive')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen1"
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "ParquetFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Archive_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Archive_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Dev_Archive')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"sourceName": {
+						"type": "String"
+					},
+					"schemaName": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen1"
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "ParquetFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Dev_Archive_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Dev_Archive_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Dev_Staging')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"sourceName": {
+						"type": "String"
+					},
+					"schemaName": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen1"
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "ParquetFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Dev_Staging_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Dev_Staging_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Staging')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen1"
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "ParquetFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Staging_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Staging_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDL_SourceDB_Table')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_SourceDB",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "On-Prem"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"typeProperties": {
+					"tableName": "dummy"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_SourceDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Local_DB_Table')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Local_AdventureWorksDW",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "On-Prem"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "DepartmentID",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GroupName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dummy",
+					"table": "dummy"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Local_AdventureWorksDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Slalom_Snowflake_Azure_Lafferty_Test_Table')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Slalom Azure Snowflake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SchemaName": {
+						"type": "string"
+					},
+					"TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Snowflake"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().SchemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Slalom Azure Snowflake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Snowflake_Lafferty_Table_Person')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Snowflake_Lafferty_trial",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Snowflake"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [
+					{
+						"name": "BusinessEntityID",
+						"type": "NUMBER",
+						"precision": 38,
+						"scale": 0
+					},
+					{
+						"name": "PersonType",
+						"type": "VARCHAR",
+						"precision": 2,
+						"scale": 0
+					},
+					{
+						"name": "NameStyle",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "Title",
+						"type": "VARCHAR",
+						"precision": 8,
+						"scale": 0
+					},
+					{
+						"name": "FirstName",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "MiddleName",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "LastName",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "Suffix",
+						"type": "VARCHAR",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "EmailPromotion",
+						"type": "NUMBER",
+						"precision": 38,
+						"scale": 0
+					},
+					{
+						"name": "AdditionalContactInfo",
+						"type": "VARCHAR",
+						"precision": 160,
+						"scale": 0
+					},
+					{
+						"name": "Demographics",
+						"type": "VARCHAR",
+						"precision": 160,
+						"scale": 0
+					},
+					{
+						"name": "rowguid",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "TIMESTAMP_NTZ",
+						"precision": 29,
+						"scale": 9
+					}
+				],
+				"typeProperties": {
+					"schema": "HumanResources",
+					"table": "EmployeeDepartmentHistory"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Snowflake_Lafferty_trial')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/datasetS3')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AmazonS3_Source",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Miscellaneous"
+				},
+				"annotations": [],
+				"type": "AmazonS3Object",
+				"typeProperties": {
+					"format": {
+						"type": "TextFormat",
+						"columnDelimiter": ",",
+						"rowDelimiter": "",
+						"nullValue": "\\N",
+						"treatEmptyAsNull": true,
+						"skipLineCount": 0,
+						"firstRowAsHeader": false
+					},
+					"key": "adf-lab/Numbers.txt",
+					"bucketName": "sumit-sample"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AmazonS3_Source')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/philly_adls_g2_archive_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "phillyadlsg2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"sourceName": {
+						"type": "string"
+					},
+					"schemaName": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen2"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat(dataset().tableName,'_',formatDateTime(trigger().startTime, 'yyyy-MM-dd'))",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@concat('Data/archive/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName,'/',formatDateTime(trigger().startTime, 'yyyy'),'/',formatDateTime(trigger().startTime, 'MM'),'/',formatDateTime(trigger().startTime, 'dd'))\n",
+							"type": "Expression"
+						},
+						"fileSystem": "dev"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/phillyadlsg2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/philly_adls_g2_staging_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "phillyadlsg2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"sourceName": {
+						"type": "string"
+					},
+					"schemaName": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen2"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().tableName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@concat('Data/staging/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName)",
+							"type": "Expression"
+						},
+						"fileSystem": "dev"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/phillyadlsg2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AmazonS3_Source')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AmazonS3",
+				"typeProperties": {
+					"serviceUrl": "",
+					"accessKeyId": "[parameters('AmazonS3_Source_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('AmazonS3_Source_secretAccessKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('AzureBlobStorage1_sasUri')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDL_DataLake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDataLakeStore",
+				"typeProperties": {
+					"dataLakeStoreUri": "[parameters('AzureDL_DataLake_properties_typeProperties_dataLakeStoreUri')]",
+					"servicePrincipalId": "[parameters('AzureDL_DataLake_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDL_DataLake_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('AzureDL_DataLake_properties_typeProperties_tenant')]",
+					"subscriptionId": "[parameters('AzureDL_DataLake_properties_typeProperties_subscriptionId')]",
+					"resourceGroupName": "[parameters('AzureDL_DataLake_properties_typeProperties_resourceGroupName')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDL_DataWarehouse')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureDL_DataWarehouse_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDL_SourceDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureDL_SourceDB_connectionString')]",
+					"servicePrincipalId": "[parameters('AzureDL_SourceDB_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDL_SourceDB_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('AzureDL_SourceDB_properties_typeProperties_tenant')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureFileStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFileStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureFileStorage1_connectionString')]",
+					"fileShare": "sqlshare"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Gen2_Staging')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('Gen2_Staging_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('Gen2_Staging_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GitHub1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "GitHub",
+				"typeProperties": {
+					"username": "[parameters('GitHub1_properties_typeProperties_username')]",
+					"credential": {
+						"type": "SecureString",
+						"value": "[parameters('GitHub1_credential')]"
+					},
+					"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFaVVJFRExEQVRBRkFDVE9SWV8zZjQ1MTQ0Ny0xZWUzLTQxNjYtODlmZS0zODcwMjcxOGY4MzgiDQp9"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Local_AdventureWorksDW')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('Local_AdventureWorksDW_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "Lafferty-Slalom-IR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/Lafferty-Slalom-IR')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PowerBIDataset')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('PowerBIDataset_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "AadServicePrincipal",
+					"servicePrincipalId": "[parameters('PowerBIDataset_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('PowerBIDataset_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('PowerBIDataset_properties_typeProperties_tenant')]",
+					"aadResourceId": "[parameters('PowerBIDataset_properties_typeProperties_aadResourceId')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Slalom Azure Snowflake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('Slalom Azure Snowflake_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Slalom_Snowflake_AWS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "new linked service",
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('Slalom_Snowflake_AWS_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Snowflake_Lafferty_trial')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('Snowflake_Lafferty_trial_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/phillyadlsg2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('phillyadlsg2_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('phillyadlsg2_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/test_SQLServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('test_SQLServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "Lafferty-SelfHostedIR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/Lafferty-SelfHostedIR')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Lafferty-SelfHostedIR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {
+					"linkedInfo": {
+						"resourceId": "[parameters('Lafferty-SelfHostedIR_properties_typeProperties_linkedInfo_resourceId')]",
+						"authorizationType": "Rbac"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Lafferty-Slalom-IR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "East US",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/create_refined_pricesByProduct_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "Slalom Azure Snowflake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "FactInternetSales"
+						},
+						{
+							"linkedService": {
+								"referenceName": "Slalom Azure Snowflake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "DimProduct"
+						},
+						{
+							"linkedService": {
+								"referenceName": "Slalom Azure Snowflake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "DimCurrency"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "Slalom Azure Snowflake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SnowflakeRefined"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Join1"
+						},
+						{
+							"name": "Join2"
+						},
+						{
+							"name": "Aggregate1"
+						},
+						{
+							"name": "AlterRow1"
+						}
+					],
+					"script": "source(output(\n\t\tProductKey as decimal(38,0),\n\t\tOrderDateKey as decimal(38,0),\n\t\tDueDateKey as decimal(38,0),\n\t\tShipDateKey as decimal(38,0),\n\t\tCustomerKey as decimal(38,0),\n\t\tPromotionKey as decimal(38,0),\n\t\tCurrencyKey as decimal(38,0),\n\t\tSalesTerritoryKey as decimal(38,0),\n\t\tSalesOrderNumber as string,\n\t\tSalesOrderLineNumber as decimal(38,0),\n\t\tRevisionNumber as decimal(38,0),\n\t\tOrderQuantity as decimal(38,0),\n\t\tUnitPrice as double,\n\t\tExtendedAmount as double,\n\t\tUnitPriceDiscountPct as double,\n\t\tDiscountAmount as double,\n\t\tProductStandardCost as double,\n\t\tTotalProductCost as double,\n\t\tSalesAmount as double,\n\t\tTaxAmt as double,\n\t\tFreight as double,\n\t\tCarrierTrackingNumber as string,\n\t\tCustomerPONumber as string,\n\t\tOrderDate as timestamp,\n\t\tDueDate as timestamp,\n\t\tShipDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'FactInternetSales',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> FactInternetSales\nsource(output(\n\t\tProductKey as decimal(38,0),\n\t\tProductAlternateKey as string,\n\t\tProductSubcategoryKey as decimal(38,0),\n\t\tWeightUnitMeasureCode as string,\n\t\tSizeUnitMeasureCode as string,\n\t\tEnglishProductName as string,\n\t\tSpanishProductName as string,\n\t\tFrenchProductName as string,\n\t\tStandardCost as double,\n\t\tFinishedGoodsFlag as decimal(38,0),\n\t\tColor as string,\n\t\tSafetyStockLevel as decimal(38,0),\n\t\tReorderPoint as decimal(38,0),\n\t\tListPrice as double,\n\t\tSize as string,\n\t\tSizeRange as string,\n\t\tWeight as double,\n\t\tDaysToManufacture as decimal(38,0),\n\t\tProductLine as string,\n\t\tDealerPrice as double,\n\t\tClass as string,\n\t\tStyle as string,\n\t\tModelName as string,\n\t\tEnglishDescription as string,\n\t\tFrenchDescription as string,\n\t\tChineseDescription as string,\n\t\tArabicDescription as string,\n\t\tHebrewDescription as string,\n\t\tThaiDescription as string,\n\t\tGermanDescription as string,\n\t\tJapaneseDescription as string,\n\t\tTurkishDescription as string,\n\t\tStartDate as timestamp,\n\t\tEndDate as timestamp,\n\t\tStatus as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'DimProduct',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> DimProduct\nsource(output(\n\t\tCurrencyKey as decimal(38,0),\n\t\tCurrencyAlternateKey as string,\n\t\tCurrencyName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'table',\n\ttableName: 'DimCurrency',\n\tschemaName: 'DBO',\n\tstore: 'snowflake') ~> DimCurrency\nFactInternetSales, DimProduct join(FactInternetSales@ProductKey == DimProduct@ProductKey,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nJoin1, DimCurrency join(FactInternetSales@CurrencyKey == DimCurrency@CurrencyKey,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join2\nJoin2 aggregate(groupBy(ProductAlternateKey,\n\t\tEnglishProductName,\n\t\tCurrencyAlternateKey),\n\tUnitPrice = sum(UnitPrice)) ~> Aggregate1\nAggregate1 alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\ttableName: 'pricesByProduct_dataflow',\n\tschemaName: 'REFINED',\n\tdeletable: false,\n\tinsertable: true,\n\tupdateable: false,\n\tupsertable: true,\n\tkeys: ['ProductAlternateKey'],\n\tstore: 'snowflake',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SnowflakeRefined"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Slalom Azure Snowflake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+			"apiVersion": "2018-06-01",
+			"properties": {},
+			"dependsOn": []
+		}
+	]
+}

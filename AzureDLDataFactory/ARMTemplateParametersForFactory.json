@@ -1,0 +1,129 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "AzureDLDataFactory"
+		},
+		"AmazonS3_Source_secretAccessKey": {
+			"value": ""
+		},
+		"AzureDL_DataLake_servicePrincipalKey": {
+			"value": ""
+		},
+		"AzureDL_DataWarehouse_connectionString": {
+			"value": ""
+		},
+		"AzureDL_SourceDB_connectionString": {
+			"value": ""
+		},
+		"AzureDL_SourceDB_servicePrincipalKey": {
+			"value": ""
+		},
+		"AzureFileStorage1_connectionString": {
+			"value": ""
+		},
+		"Gen2_Staging_accountKey": {
+			"value": ""
+		},
+		"GitHub1_credential": {
+			"value": ""
+		},
+		"Local_AdventureWorksDW_connectionString": {
+			"value": ""
+		},
+		"PowerBIDataset_servicePrincipalKey": {
+			"value": ""
+		},
+		"phillyadlsg2_accountKey": {
+			"value": ""
+		},
+		"test_SQLServer_connectionString": {
+			"value": ""
+		},
+		"ADLS_Archive_properties_typeProperties_fileName": {
+			"value": "@concat(dataset().TableName,'_',formatDateTime(trigger().startTime, 'yyyy-MM-dd'))"
+		},
+		"ADLS_Archive_properties_typeProperties_folderPath": {
+			"value": "@concat('Dev/Data/AdventureWorks/archive/',dataset().TableName,'/',formatDateTime(trigger().startTime, 'yyyy'),'/',formatDateTime(trigger().startTime, 'MM'),'/',formatDateTime(trigger().startTime, 'dd'))"
+		},
+		"ADLS_Dev_Archive_properties_typeProperties_fileName": {
+			"value": "@concat(dataset().tableName,'_',formatDateTime(trigger().startTime, 'yyyy-MM-dd'))"
+		},
+		"ADLS_Dev_Archive_properties_typeProperties_folderPath": {
+			"value": "@concat('Dev/Data/archive/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName,'/',formatDateTime(trigger().startTime, 'yyyy'),'/',formatDateTime(trigger().startTime, 'MM'),'/',formatDateTime(trigger().startTime, 'dd'))"
+		},
+		"ADLS_Dev_Staging_properties_typeProperties_fileName": {
+			"value": "@dataset().tableName"
+		},
+		"ADLS_Dev_Staging_properties_typeProperties_folderPath": {
+			"value": "@concat('Dev/Data/staging/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName)"
+		},
+		"ADLS_Staging_properties_typeProperties_fileName": {
+			"value": "@dataset().TableName"
+		},
+		"ADLS_Staging_properties_typeProperties_folderPath": {
+			"value": "@concat('Dev/Data/AdventureWorks/staging/',dataset().TableName)"
+		},
+		"AmazonS3_Source_properties_typeProperties_accessKeyId": {
+			"value": "AKIAIQ4OP52NL7BUMPBQ "
+		},
+		"AzureBlobStorage1_sasUri": {
+			"value": ""
+		},
+		"AzureDL_DataLake_properties_typeProperties_dataLakeStoreUri": {
+			"value": "https://azuredldatalake.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDL_DataLake_properties_typeProperties_servicePrincipalId": {
+			"value": "94918a77-5cb8-410d-8e21-2ea4d88c8e82"
+		},
+		"AzureDL_DataLake_properties_typeProperties_tenant": {
+			"value": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"AzureDL_DataLake_properties_typeProperties_subscriptionId": {
+			"value": "23e24950-8a7c-4cbd-a9a9-1edcf2029ff0"
+		},
+		"AzureDL_DataLake_properties_typeProperties_resourceGroupName": {
+			"value": "Azure_DataLake_Presentation"
+		},
+		"AzureDL_SourceDB_properties_typeProperties_servicePrincipalId": {
+			"value": "f9378d8f-a20d-422f-b14f-a6f7958b77d6"
+		},
+		"AzureDL_SourceDB_properties_typeProperties_tenant": {
+			"value": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"Gen2_Staging_properties_typeProperties_url": {
+			"value": "https://laffertymalverndlg2.dfs.core.windows.net"
+		},
+		"GitHub1_properties_typeProperties_username": {
+			"value": "patlaff"
+		},
+		"PowerBIDataset_properties_typeProperties_url": {
+			"value": "https://api.powerbi.com/v1.0/myorg/groups/674a0659-322c-460d-853a-5c8c9259e6c1/datasets/62d62abf-5f01-4b10-88db-ca2f5dc00805/refreshes"
+		},
+		"PowerBIDataset_properties_typeProperties_servicePrincipalId": {
+			"value": "57f261b5-e3ec-4ad5-97aa-9fbb5dd5517b"
+		},
+		"PowerBIDataset_properties_typeProperties_tenant": {
+			"value": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"PowerBIDataset_properties_typeProperties_aadResourceId": {
+			"value": "https://analysis.windows.net/powerbi/api"
+		},
+		"Slalom Azure Snowflake_connectionString": {
+			"value": ""
+		},
+		"Slalom_Snowflake_AWS_connectionString": {
+			"value": ""
+		},
+		"Snowflake_Lafferty_trial_connectionString": {
+			"value": ""
+		},
+		"phillyadlsg2_properties_typeProperties_url": {
+			"value": "https://phillyadlsg2.dfs.core.windows.net"
+		},
+		"Lafferty-SelfHostedIR_properties_typeProperties_linkedInfo_resourceId": {
+			"value": "/subscriptions/23e24950-8a7c-4cbd-a9a9-1edcf2029ff0/resourcegroups/innovationlab/providers/Microsoft.DataFactory/factories/PHL-InnovationLab-Factory/integrationruntimes/Lafferty-SelfHostedIR"
+		}
+	}
+}

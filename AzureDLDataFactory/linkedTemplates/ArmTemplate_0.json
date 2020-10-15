@@ -1,0 +1,574 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "AzureDLDataFactory"
+		},
+		"AmazonS3_Source_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS3_Source'"
+		},
+		"AzureDL_DataLake_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'AzureDL_DataLake'"
+		},
+		"AzureDL_DataWarehouse_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureDL_DataWarehouse'"
+		},
+		"AzureDL_SourceDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureDL_SourceDB'"
+		},
+		"AzureDL_SourceDB_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'AzureDL_SourceDB'"
+		},
+		"AzureFileStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureFileStorage1'"
+		},
+		"Gen2_Staging_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'Gen2_Staging'"
+		},
+		"GitHub1_credential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'credential' of 'GitHub1'"
+		},
+		"PowerBIDataset_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'PowerBIDataset'"
+		},
+		"phillyadlsg2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'phillyadlsg2'"
+		},
+		"AmazonS3_Source_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAIQ4OP52NL7BUMPBQ "
+		},
+		"AzureBlobStorage1_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage1'"
+		},
+		"AzureDL_DataLake_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://azuredldatalake.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDL_DataLake_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "94918a77-5cb8-410d-8e21-2ea4d88c8e82"
+		},
+		"AzureDL_DataLake_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"AzureDL_DataLake_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "23e24950-8a7c-4cbd-a9a9-1edcf2029ff0"
+		},
+		"AzureDL_DataLake_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "Azure_DataLake_Presentation"
+		},
+		"AzureDL_SourceDB_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "f9378d8f-a20d-422f-b14f-a6f7958b77d6"
+		},
+		"AzureDL_SourceDB_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"Gen2_Staging_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://laffertymalverndlg2.dfs.core.windows.net"
+		},
+		"GitHub1_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "patlaff"
+		},
+		"PowerBIDataset_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.powerbi.com/v1.0/myorg/groups/674a0659-322c-460d-853a-5c8c9259e6c1/datasets/62d62abf-5f01-4b10-88db-ca2f5dc00805/refreshes"
+		},
+		"PowerBIDataset_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "57f261b5-e3ec-4ad5-97aa-9fbb5dd5517b"
+		},
+		"PowerBIDataset_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "9ca75128-a244-4596-877b-f24828e476e2"
+		},
+		"PowerBIDataset_properties_typeProperties_aadResourceId": {
+			"type": "string",
+			"defaultValue": "https://analysis.windows.net/powerbi/api"
+		},
+		"Slalom Azure Snowflake_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Slalom Azure Snowflake'"
+		},
+		"Slalom_Snowflake_AWS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Slalom_Snowflake_AWS'"
+		},
+		"Snowflake_Lafferty_trial_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Snowflake_Lafferty_trial'"
+		},
+		"phillyadlsg2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://phillyadlsg2.dfs.core.windows.net"
+		},
+		"Lafferty-SelfHostedIR_properties_typeProperties_linkedInfo_resourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/23e24950-8a7c-4cbd-a9a9-1edcf2029ff0/resourcegroups/innovationlab/providers/Microsoft.DataFactory/factories/PHL-InnovationLab-Factory/integrationruntimes/Lafferty-SelfHostedIR"
+		},
+		"ADLS_Archive_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@concat(dataset().TableName,'_',formatDateTime(trigger().startTime, 'yyyy-MM-dd'))"
+		},
+		"ADLS_Archive_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat('Dev/Data/AdventureWorks/archive/',dataset().TableName,'/',formatDateTime(trigger().startTime, 'yyyy'),'/',formatDateTime(trigger().startTime, 'MM'),'/',formatDateTime(trigger().startTime, 'dd'))"
+		},
+		"ADLS_Dev_Archive_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@concat(dataset().tableName,'_',formatDateTime(trigger().startTime, 'yyyy-MM-dd'))"
+		},
+		"ADLS_Dev_Archive_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat('Dev/Data/archive/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName,'/',formatDateTime(trigger().startTime, 'yyyy'),'/',formatDateTime(trigger().startTime, 'MM'),'/',formatDateTime(trigger().startTime, 'dd'))"
+		},
+		"ADLS_Dev_Staging_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().tableName"
+		},
+		"ADLS_Dev_Staging_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat('Dev/Data/staging/',dataset().sourceName,'/',dataset().schemaName,'/',dataset().tableName)"
+		},
+		"ADLS_Staging_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().TableName"
+		},
+		"ADLS_Staging_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat('Dev/Data/AdventureWorks/staging/',dataset().TableName)"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AmazonS3_Source')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AmazonS3",
+				"typeProperties": {
+					"serviceUrl": "",
+					"accessKeyId": "[parameters('AmazonS3_Source_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('AmazonS3_Source_secretAccessKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('AzureBlobStorage1_sasUri')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDL_DataLake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDataLakeStore",
+				"typeProperties": {
+					"dataLakeStoreUri": "[parameters('AzureDL_DataLake_properties_typeProperties_dataLakeStoreUri')]",
+					"servicePrincipalId": "[parameters('AzureDL_DataLake_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDL_DataLake_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('AzureDL_DataLake_properties_typeProperties_tenant')]",
+					"subscriptionId": "[parameters('AzureDL_DataLake_properties_typeProperties_subscriptionId')]",
+					"resourceGroupName": "[parameters('AzureDL_DataLake_properties_typeProperties_resourceGroupName')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDL_DataWarehouse')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureDL_DataWarehouse_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDL_SourceDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureDL_SourceDB_connectionString')]",
+					"servicePrincipalId": "[parameters('AzureDL_SourceDB_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDL_SourceDB_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('AzureDL_SourceDB_properties_typeProperties_tenant')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureFileStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFileStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureFileStorage1_connectionString')]",
+					"fileShare": "sqlshare"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Gen2_Staging')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('Gen2_Staging_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('Gen2_Staging_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GitHub1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "GitHub",
+				"typeProperties": {
+					"username": "[parameters('GitHub1_properties_typeProperties_username')]",
+					"credential": {
+						"type": "SecureString",
+						"value": "[parameters('GitHub1_credential')]"
+					},
+					"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFaVVJFRExEQVRBRkFDVE9SWV8zZjQ1MTQ0Ny0xZWUzLTQxNjYtODlmZS0zODcwMjcxOGY4MzgiDQp9"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PowerBIDataset')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('PowerBIDataset_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "AadServicePrincipal",
+					"servicePrincipalId": "[parameters('PowerBIDataset_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('PowerBIDataset_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('PowerBIDataset_properties_typeProperties_tenant')]",
+					"aadResourceId": "[parameters('PowerBIDataset_properties_typeProperties_aadResourceId')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Slalom Azure Snowflake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('Slalom Azure Snowflake_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Slalom_Snowflake_AWS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "new linked service",
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('Slalom_Snowflake_AWS_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Snowflake_Lafferty_trial')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('Snowflake_Lafferty_trial_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/phillyadlsg2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('phillyadlsg2_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('phillyadlsg2_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Lafferty-SelfHostedIR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {
+					"linkedInfo": {
+						"resourceId": "[parameters('Lafferty-SelfHostedIR_properties_typeProperties_linkedInfo_resourceId')]",
+						"authorizationType": "Rbac"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Lafferty-Slalom-IR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+			"apiVersion": "2018-06-01",
+			"properties": {},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Archive')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen1"
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "ParquetFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Archive_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Archive_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Dev_Archive')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"sourceName": {
+						"type": "String"
+					},
+					"schemaName": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen1"
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "ParquetFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Dev_Archive_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Dev_Archive_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Dev_Staging')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"sourceName": {
+						"type": "String"
+					},
+					"schemaName": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen1"
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "ParquetFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Dev_Staging_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Dev_Staging_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Staging')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDL_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "ADLS Gen1"
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "ParquetFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Staging_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Staging_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDL_DataLake')]"
+			]
+		}
+	]
+}
